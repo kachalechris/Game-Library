@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Game Library</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <h1>🎮 My Game Library</h1>
+        <p class="subtitle">Your personal gaming collection</p>
+    </header>
+
+    <main>
+
+        <!-- GAME LIST -->
+        <section class="game-list" id="game-list">
+            <h2>My Games</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>Rating</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for game in games %}
+                    <tr>
+                        <td>
+                            <a class="game-link"
+                               href="#{{ game.game_id }}">
+                                <div class="game-name">
+                                    <img
+                                        class="game-icon"
+                                        src="{{ url_for('static', filename=game.icon) }}"
+                                        alt="{{ game.name }} icon"
+                                    >
+
+                                    <div class="game-info">
+                                        <span>{{ game.name }}</span>
+                                        <small>{{ game.genre }}</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </td>
+
+                        <td class="rating">
+                            {{ game.rating }}/10
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+
+        <!-- GAME DETAILS -->
+        <section class="game-details">
+            <h2>Game Details</h2>
+
+            {% for game in games %}
+            <article class="game-card"
+                     id="{{ game.game_id }}">
+
+                <h2>{{ game.name }}</h2>
+
+                <p class="game-genre">{{ game.genre }}</p>
+
+                <p class="rating">
+                    My rating: {{ game.rating }}/10
+                </p>
+
+                <!-- SCREENSHOT SLIDESHOW -->
+                <div class="slideshow"
+                     data-image-one="{{ url_for('static', filename=game.screenshots[0]) }}"
+                     data-image-two="{{ url_for('static', filename=game.screenshots[1]) }}">
+
+                    <img
+                        class="slide-image"
+                        src="{{ url_for('static', filename=game.screenshots[0]) }}"
+                        alt="{{ game.name }} gameplay screenshot"
+                    >
+
+                    <div class="slideshow-controls">
+                        <button type="button" class="previous-slide">
+                            ❮ Previous
+                        </button>
+
+                        <span class="slide-counter">1 / 2</span>
+
+                        <button type="button" class="next-slide">
+                            Next ❯
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GAME DESCRIPTION -->
+                <div class="description">
+                    <h3>About this game</h3>
+                    <p>{{ game.description }}</p>
+                </div>
+
+                <!-- GAMEPLAY VIDEO -->
+                <div class="gameplay">
+                    <h3>Gameplay</h3>
+
+                    <video controls preload="metadata">
+                        <source
+                            src="{{ url_for('static', filename=game.video) }}"
+                            type="video/mp4"
+                        >
+                        Your browser does not support HTML video.
+                    </video>
+                </div>
+
+                <a class="back-to-list" href="#game-list">
+                    ↑ Back to game list
+                </a>
+
+            </article>
+            {% endfor %}
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Made by Christopher and VS code.</p>
+    </footer>
+
+
+    <!-- SLIDESHOW JAVASCRIPT -->
+    <script>
+        document.querySelectorAll(".slideshow").forEach(slideshow => {
+            const image = slideshow.querySelector(".slide-image");
+            const previous = slideshow.querySelector(".previous-slide");
+            const next = slideshow.querySelector(".next-slide");
+            const counter = slideshow.querySelector(".slide-counter");
+
+            const images = [
+                slideshow.dataset.imageOne,
+                slideshow.dataset.imageTwo
+            ];
+
+            let currentSlide = 0;
+
+            function showSlide(index) {
+                currentSlide = (index + images.length) % images.length;
+                image.src = images[currentSlide];
+                counter.textContent =
+                    `${currentSlide + 1} / ${images.length}`;
+            }
+
+            previous.addEventListener("click", () => {
+                showSlide(currentSlide - 1);
+            });
+
+            next.addEventListener("click", () => {
+                showSlide(currentSlide + 1);
+            });
+        });
+    </script>
+
+</body>
+</html>
